@@ -1,0 +1,13 @@
+[package]
+name = "project"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+solana-program = "1.9.5"
+error = "0.1.9"
+borsh = "0.9.2"
+serum = "0.4.7"
+releez = "1.0.3"
