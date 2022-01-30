@@ -1,19 +1,16 @@
 pub mod utils;
 
 use borsh::{BorshDeserialize, BorshSerialize};
-use error::{ProgramError, TokenError};
 use solana_program::{
     account_info::{next_account_info, AccountInfo},
-    decode_error::DecodeError,
     entrypoint,
     entrypoint::ProgramResult,
-    instruction, msg,
-    program::{invoke, invoke_signed},
-    program_error::{PrintProgramError, ProgramError},
+    msg,
+    program_error::ProgramError,
     pubkey::Pubkey,
-    system_program,
-    sysvar::{clock::Clock, fees::Fees, rent::Rent, Sysvar},
+    sysvar::{rent::Rent, Sysvar},
 };
+
 pub struct SendingAccount {
     amount: u64,
 }
@@ -43,7 +40,7 @@ fn process_instruction(
     let rent = Rent::get()?; //rent to be paid to store data.
     if send_data.data_is_empty() {
         // is empty vanpaxi afi new function creat garna parxa. yo function la account info mai define garako xa
-        return Err(TokenError::NoDataToSend);
+        return Err(ProgramError::InsufficientFunds);
     }
 
     let mut sending_account = SendingAccount::try_from_slice(&accounts.data.borrow())?;
