@@ -1,9 +1,12 @@
 use solana_program::{
+    account_info::AccountInfo,
     instruction::{AccountMeta, Instruction},
+    program::{invoke, invoke_signed},
     pubkey::Pubkey,
     system_instruction::SystemInstruction,
     system_program,
 };
+use std::error::Error;
 
 pub fn transfer(from_pubkey: &Pubkey, to_pubkey: &Pubkey, lamports: u64) -> Instruction {
     let account_metas = vec![
@@ -16,17 +19,17 @@ pub fn transfer(from_pubkey: &Pubkey, to_pubkey: &Pubkey, lamports: u64) -> Inst
         account_metas,
     )
 }
-// pub fn transfer(from_pubkey: &Pubkey, to_pubkey: &Pubkey, lamports: u64) -> Instruction {
-//     let account_metas = vec![
-//         AccountMeta::new(*from_pubkey, true),
-//         AccountMeta::new(*to_pubkey, false),
-//     ];
-//     Instruction::new_with_bincode(
-//         system_program::id(),
-//         &SystemInstruction::Transfer { lamports },
-//         account_metas,
-//     )
-// }
+pub fn transfer(from_pubkey: &Pubkey, to_pubkey: &Pubkey, lamports: u64) -> Instruction {
+    let account_metas = vec![
+        AccountMeta::new(*from_pubkey, true),
+        AccountMeta::new(*to_pubkey, false),
+    ];
+    Instruction::new_with_bincode(
+        system_program::id(),
+        &SystemInstruction::Transfer { lamports },
+        account_metas,
+    )
+}
 
 // here we are creating a new function this is not available in rust doc
 // pub fn assert_with_msg(statement: bool, err: ProgramError, msg: &str) -> ProgramResult {

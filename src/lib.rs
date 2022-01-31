@@ -47,25 +47,12 @@ fn process_instruction(
         // is empty vanpaxi afi new function creat garna parxa. yo function la account info mai define garako xa
         return Err(ProgramError::InsufficientFunds);
     }
-
     let mut sending_account = SendingAccount::try_from_slice(&send_data.data.borrow())?;
-    pub fn transfer(from_pubkey: &Pubkey, to_pubkey: &Pubkey, lamports: u64) -> Instruction {
-        let account_metas = vec![
-            AccountMeta::new(*from_pubkey, true),
-            AccountMeta::new(*to_pubkey, false),
-        ];
-        Instruction::new_with_bincode(
-            system_program::id(),
-            &SystemInstruction::Transfer { lamports },
-            account_metas,
-        )
-    }
-
     invoke(
         &solana_program::system_instruction::transfer(
             source_account_info.key,
             dest_account_info.key,
-            lamport,
+            10,
         ),
         &[
             source_account_info.clone(),
@@ -73,6 +60,7 @@ fn process_instruction(
             system_program.clone(),
         ],
     )?;
+
     sending_account.serialize(&mut &mut send_data.data.borrow_mut()[..])?;
 
     Ok(())
