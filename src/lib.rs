@@ -1,13 +1,17 @@
-pub mod utils;
+// pub mod utils;
 
 use borsh::{BorshDeserialize, BorshSerialize};
 use solana_program::{
     account_info::{next_account_info, AccountInfo},
     entrypoint,
     entrypoint::ProgramResult,
+    instruction::{AccountMeta, Instruction},
     msg,
+    program::invoke,
     program_error::ProgramError,
     pubkey::Pubkey,
+    system_instruction::SystemInstruction,
+    system_program,
     sysvar::{rent::Rent, Sysvar},
 };
 #[repr(C)]
@@ -45,7 +49,30 @@ fn process_instruction(
     }
 
     let mut sending_account = SendingAccount::try_from_slice(&send_data.data.borrow())?;
+    pub fn transfer(from_pubkey: &Pubkey, to_pubkey: &Pubkey, lamports: u64) -> Instruction {
+        let account_metas = vec![
+            AccountMeta::new(*from_pubkey, true),
+            AccountMeta::new(*to_pubkey, false),
+        ];
+        Instruction::new_with_bincode(
+            system_program::id(),
+            &SystemInstruction::Transfer { lamports },
+            account_metas,
+        )
+    }
 
+    invoke(
+        &solana_program::system_instruction::transfer(
+            source_account_info.key,
+            dest_account_info.key,
+            lamport,
+        ),
+        &[
+            source_account_info.clone(),
+            dest_account_info.clone(),
+            system_program.clone(),
+        ],
+    )?;
     sending_account.serialize(&mut &mut send_data.data.borrow_mut()[..])?;
 
     Ok(())
