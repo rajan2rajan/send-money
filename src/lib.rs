@@ -10,7 +10,8 @@ use solana_program::{
     pubkey::Pubkey,
     sysvar::{rent::Rent, Sysvar},
 };
-
+#[repr(C)]
+#[derive(BorshSerialize, BorshDeserialize, Clone, Copy, Debug, Default, PartialEq)]
 pub struct SendingAccount {
     amount: u64,
 }
@@ -43,9 +44,9 @@ fn process_instruction(
         return Err(ProgramError::InsufficientFunds);
     }
 
-    let mut sending_account = SendingAccount::try_from_slice(&accounts.data.borrow())?;
+    let mut sending_account = SendingAccount::try_from_slice(&send_data.data.borrow())?;
 
-    sending_account.serialize(&mut &mut accounts.data.borrow_mut()[..])?;
+    sending_account.serialize(&mut &mut send_data.data.borrow_mut()[..])?;
 
     Ok(())
 }
